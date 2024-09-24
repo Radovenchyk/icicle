@@ -129,7 +129,7 @@ int main(int argc, char** argv)
   CHK_IF_RETURN(cudaStreamSynchronize(ntt_config.ctx.stream));
   CHK_IF_RETURN(cudaEventElapsedTime(&icicle_time, ntt_start, ntt_stop));
 
-  printf("Old Runtime=%0.3f MS\n", icicle_time / (iterations));
+  printf("dcct Runtime=%0.3f MS\n", icicle_time / (iterations));
 
   CHK_IF_RETURN(
     cudaMemcpy(CpuOutput.get(), GpuOutput, NTT_SIZE * BATCH_SIZE * sizeof(test_data), cudaMemcpyDeviceToHost));
@@ -138,8 +138,8 @@ int main(int argc, char** argv)
   for (int i = 0; i < NTT_SIZE * BATCH_SIZE; i++) {
     // if (i == 1024)
     //   break;
-    if (i % 512 < 2)
-      std::cout << CpuOutput[i] << " " << i << std::endl;
+    // if (i % 512 < 2)
+    //   std::cout << CpuOutput[i] << " " << i << std::endl;
   }
   bool success = true;
   // for (int i = 0; i < NTT_SIZE * BATCH_SIZE; i++) {

@@ -514,40 +514,40 @@ namespace mxntt {
     else
       engine.loadGlobalData(in, data_stride, log_data_stride, strided, s_meta);
 
-    if (s_meta.ntt_block_id > 14 && s_meta.ntt_block_id < 18 && s_meta.ntt_inp_id == 0)
-      printf(
-        "T BEFORE: B: %d, I: %d\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n",
-        s_meta.ntt_block_id,
-        s_meta.ntt_inp_id,
-        engine.X[0].limbs_storage.limbs[0],
-        engine.X[1].limbs_storage.limbs[0],
-        engine.X[2].limbs_storage.limbs[0],
-        engine.X[3].limbs_storage.limbs[0],
-        engine.X[4].limbs_storage.limbs[0],
-        engine.X[5].limbs_storage.limbs[0],
-        engine.X[6].limbs_storage.limbs[0],
-        engine.X[7].limbs_storage.limbs[0]
-      );
+    // if (s_meta.ntt_block_id > 14 && s_meta.ntt_block_id < 18 && s_meta.ntt_inp_id == 0)
+    //   printf(
+    //     "T BEFORE: B: %d, I: %d\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n",
+    //     s_meta.ntt_block_id,
+    //     s_meta.ntt_inp_id,
+    //     engine.X[0].limbs_storage.limbs[0],
+    //     engine.X[1].limbs_storage.limbs[0],
+    //     engine.X[2].limbs_storage.limbs[0],
+    //     engine.X[3].limbs_storage.limbs[0],
+    //     engine.X[4].limbs_storage.limbs[0],
+    //     engine.X[5].limbs_storage.limbs[0],
+    //     engine.X[6].limbs_storage.limbs[0],
+    //     engine.X[7].limbs_storage.limbs[0]
+    //   );
 
     engine.ntt8();
     engine.SharedData32Columns8(shmem, true, false, strided); // store
     __syncthreads();
     engine.SharedData32Rows4_2(shmem, false, false, strided); // load
 
-    if (s_meta.ntt_block_id > 14 && s_meta.ntt_block_id < 18 && s_meta.ntt_inp_id == 0)
-      printf(
-        "T AFTER: B: %d, I: %d\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n",
-        s_meta.ntt_block_id,
-        s_meta.ntt_inp_id,
-        engine.X[0].limbs_storage.limbs[0],
-        engine.X[1].limbs_storage.limbs[0],
-        engine.X[2].limbs_storage.limbs[0],
-        engine.X[3].limbs_storage.limbs[0],
-        engine.X[4].limbs_storage.limbs[0],
-        engine.X[5].limbs_storage.limbs[0],
-        engine.X[6].limbs_storage.limbs[0],
-        engine.X[7].limbs_storage.limbs[0]
-      );
+    // if (s_meta.ntt_block_id > 14 && s_meta.ntt_block_id < 18 && s_meta.ntt_inp_id == 0)
+    //   printf(
+    //     "T AFTER: B: %d, I: %d\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n0x%x\n",
+    //     s_meta.ntt_block_id,
+    //     s_meta.ntt_inp_id,
+    //     engine.X[0].limbs_storage.limbs[0],
+    //     engine.X[1].limbs_storage.limbs[0],
+    //     engine.X[2].limbs_storage.limbs[0],
+    //     engine.X[3].limbs_storage.limbs[0],
+    //     engine.X[4].limbs_storage.limbs[0],
+    //     engine.X[5].limbs_storage.limbs[0],
+    //     engine.X[6].limbs_storage.limbs[0],
+    //     engine.X[7].limbs_storage.limbs[0]
+    //   );
 
     engine.loadBasicTwiddlesGeneric(basic_twiddles, twiddle_stride, log_data_stride, s_meta, tw_log_size, twiddles_offset, 5, inv, true);
     engine.ntt4_2();
@@ -1192,7 +1192,7 @@ namespace mxntt {
         in, out, basic_twiddles, log_size, tw_log_size,
         columns_batch ? batch_size : 0, columns_batch ? 1 : batch_size, 1, 0, 0, columns_batch, 0, inv);
       CHK_IF_RETURN(cudaPeekAtLastError());
-      CHK_IF_RETURN(cudaDeviceSynchronize());
+      // CHK_IF_RETURN(cudaDeviceSynchronize());
 #else
       ntt64<<<NOF_BLOCKS, NOF_THREADS, 8 * 64 * sizeof(E), cuda_stream>>>(
         in, out, external_twiddles, internal_twiddles, basic_twiddles, log_size, tw_log_size,
@@ -1279,7 +1279,7 @@ namespace mxntt {
         first_run = stage_size && !prev_stage;
 
         uint32_t nof_ntt_blocks = (1 << log_size - stage_size) * (columns_batch ? 1 : batch_size);
-        std::cout << "Stage " << i << "; stage_size " << stage_size << "; nof_ntt_blocks: " << nof_ntt_blocks << "; stride log " << stride_log << "; twiddles_offset: " << twiddles_offset << std::endl;
+        //std::cout << "Stage " << i << "; stage_size " << stage_size << "; nof_ntt_blocks: " << nof_ntt_blocks << "; stride log " << stride_log << "; twiddles_offset: " << twiddles_offset << std::endl;
 #ifdef DCCT
         if (stage_size == 6)
           ntt64_dcct<<<nof_blocks, 64, 8 * 64 * sizeof(E), cuda_stream>>>(
@@ -1297,7 +1297,7 @@ namespace mxntt {
             columns_batch ? batch_size : 0, nof_ntt_blocks, 1 << stride_log,
             stride_log, i ? (1 << stride_log) : 0, i || columns_batch, twiddles_offset, inv);
         twiddles_offset += nof_ntt_blocks * stage_size * (1 << stage_size - 1);
-        cudaDeviceSynchronize();
+        //cudaDeviceSynchronize();
 #else
         if (stage_size == 6)
           ntt64<<<nof_blocks, 64, 8 * 64 * sizeof(E), cuda_stream>>>(

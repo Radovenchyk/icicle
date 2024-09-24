@@ -73,20 +73,20 @@ public:
     uint32_t base_exp = phase_offset + twiddles_offset + block_offset + ntt_inp_offset;
     uint32_t exp;
 
-    if ((s_meta.ntt_block_id == 15 || s_meta.ntt_block_id == 16) && s_meta.ntt_inp_id == 0) {
-      printf(
-        "T: %d, II: %d, B: %d, block_size: %d, tw_order: %d, tw_log_order: %d, tw_log_size: %d, block_offset: %d, ntt_inp_offset: %d\n",
-        threadIdx.x,
-        s_meta.ntt_inp_id,
-        s_meta.ntt_block_id,
-        s_meta.ntt_block_size,
-        tw_order,
-        tw_log_order,
-        tw_log_size,
-        block_offset,
-        ntt_inp_offset
-      );
-    }
+    // if ((s_meta.ntt_block_id == 15 || s_meta.ntt_block_id == 16) && s_meta.ntt_inp_id == 0) {
+    //   printf(
+    //     "T: %d, II: %d, B: %d, block_size: %d, tw_order: %d, tw_log_order: %d, tw_log_size: %d, block_offset: %d, ntt_inp_offset: %d\n",
+    //     threadIdx.x,
+    //     s_meta.ntt_inp_id,
+    //     s_meta.ntt_block_id,
+    //     s_meta.ntt_block_size,
+    //     tw_order,
+    //     tw_log_order,
+    //     tw_log_size,
+    //     block_offset,
+    //     ntt_inp_offset
+    //   );
+    // }
 
     UNROLL
     for (int stage = 0; stage < (phase ? ntt_log_size - 3 : 3); stage++) {
@@ -97,17 +97,17 @@ public:
           * (1 << (phase ? 0 : ntt_log_size - 3));
 
         // if ((s_meta.ntt_block_id == 255 && s_meta.ntt_inp_id == 3) || (s_meta.ntt_block_id == 0 && s_meta.ntt_inp_id == 0) || (s_meta.ntt_block_id == 511 && s_meta.ntt_inp_id == 1)) {
-        if ((s_meta.ntt_block_id == 15 || s_meta.ntt_block_id == 16) && s_meta.ntt_inp_id == 0) {
-          printf(
-            "T: %d, I: %d, II: %d, B: %d, exp: %d, tw: 0x%x\n",
-            threadIdx.x,
-            stage * 4 + i,
-            s_meta.ntt_inp_id,
-            s_meta.ntt_block_id,
-            exp,
-            basic_twiddles[exp].limbs_storage.limbs[0]
-          );
-        }
+        // if ((s_meta.ntt_block_id == 15 || s_meta.ntt_block_id == 16) && s_meta.ntt_inp_id == 0) {
+        //   printf(
+        //     "T: %d, I: %d, II: %d, B: %d, exp: %d, tw: 0x%x\n",
+        //     threadIdx.x,
+        //     stage * 4 + i,
+        //     s_meta.ntt_inp_id,
+        //     s_meta.ntt_block_id,
+        //     exp,
+        //     basic_twiddles[exp].limbs_storage.limbs[0]
+        //   );
+        // }
 
         WB[stage * 4 + i] = basic_twiddles[(inv && exp) ? (tw_size - exp) : exp];
       }
