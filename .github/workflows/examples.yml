@@ -57,6 +57,7 @@ jobs:
       working-directory: ./examples/rust
       if: needs.check-changed-files.outputs.rust == 'true' || needs.check-changed-files.outputs.examples == 'true'
       run: |
+        cargo build --release --features=cuda
         # loop over all directories in the current directory
         for dir in $(find . -mindepth 1 -maxdepth 1 -type d); do
           if [ -d "$dir" ]; then
